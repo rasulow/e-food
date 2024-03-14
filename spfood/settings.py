@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     # restframework
     'rest_framework',
     'drf_yasg',
+    'django_filters',
     
     # custom app's
     'product.apps.ProductConfig'
@@ -46,6 +47,9 @@ AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
 )
 
+REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend']
+}
 
 
 TEMPLATES = [

@@ -1,18 +1,12 @@
 from rest_framework import serializers
-from .models import AbstractCategory
+from .models import Category
 
-class ChildCategorySerializer(serializers.ModelSerializer):
+
+class CategorySerializer(serializers.ModelSerializer):
     class Meta:
-        model = AbstractCategory
-        fields = ['name_tm', 'name_ru', 'icon']
-
-class AbstractCategorySerializer(serializers.ModelSerializer):
-    child_categories = ChildCategorySerializer(many=True, read_only=True)
-
-    class Meta:
-        model = AbstractCategory
-        fields = ['name_tm', 'name_ru', 'icon', 'child_categories']
-
+        model = Category
+        fields = '__all__'
+        
     def to_representation(self, instance):
         request = self.context.get('request')
         data = super().to_representation(instance)
@@ -24,10 +18,12 @@ class AbstractCategorySerializer(serializers.ModelSerializer):
             elif lang.startswith('tk'):
                 data['name'] = data.pop('name_tm', None)
                 data.pop('name_ru', None)
-        # Reorder the keys to show 'name' first, followed by 'icon'
         ordered_data = {
+            'id': data.get('id'),
             'name': data.get('name'),
             'icon': data.get('icon'),
-            'child_categories': data.get('child_categories')
+            'slug': data.get('slug'),
+            'created_at': data.get('created_at'),
+            'updated_at': data.get('updated_at'),
         }
         return ordered_data

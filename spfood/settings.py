@@ -16,8 +16,6 @@ ALLOWED_HOSTS = ['*']
 INSTALLED_APPS = [
     'jazzmin',
     'django.contrib.admin',
-    'django.contrib.sites',
-    'django.contrib.flatpages',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -26,12 +24,6 @@ INSTALLED_APPS = [
     
     # restframework
     'rest_framework',
-    
-    'widget_tweaks',
-    'haystack',
-    'treebeard',
-    'sorl.thumbnail',
-    'django_tables2',
     'drf_yasg',
     
     # custom app's
@@ -73,12 +65,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'spfood.wsgi.application'
-
-HAYSTACK_CONNECTIONS = {
-    'default': {
-        'ENGINE': 'haystack.backends.simple_backend.SimpleEngine',
-    },
-}
 
 
 

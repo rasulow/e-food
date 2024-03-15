@@ -15,12 +15,20 @@ class ProductListApiView(generics.ListAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductListSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = [
-        'category__slug', 
-        'subcategory__slug', 
-        'supersubcategory__slug',
-        'brand__slug'
-    ]
+    filterset_fields = ['category__slug', 'brand__slug']
+
+    def filter_queryset(self, queryset):
+        category_slug = self.request.query_params.get('category__slug', None)
+        if category_slug:
+            queryset = queryset.filter(
+                category__slug=category_slug
+            ) | queryset.filter(
+                subcategory__slug=category_slug
+            ) | queryset.filter(
+                supersubcategory__slug=category_slug
+            )
+        return queryset
+
 
 
 

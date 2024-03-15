@@ -13,7 +13,24 @@ class CategoryListApiView(generics.ListAPIView):
     
 class ProductListApiView(generics.ListAPIView):
     queryset = Product.objects.all()
-    serializer_class = ProductSerializer
+    serializer_class = ProductListSerializer
     filter_backends = [DjangoFilterBackend]
-    filterset_fields = ['category__slug', 'subcategory__slug', 'supersubcategory__slug']
+    filterset_fields = [
+        'category__slug', 
+        'subcategory__slug', 
+        'supersubcategory__slug',
+        'brand__slug'
+    ]
 
+
+
+class ProductDetailApiView(generics.RetrieveAPIView):
+    queryset = Product.objects.all()
+    serializer_class = ProductDetailSerializer
+    lookup_field = 'slug'
+    
+    
+class BrandListApiView(generics.ListAPIView):
+    queryset = Brand.objects.all()
+    serializer_class = BrandSerializer
+    

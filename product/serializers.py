@@ -85,8 +85,56 @@ class CategorySerializer(BaseSerializer):
         return ordered_data
 
 
+class BrandSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Brand
+        fields = ('id', 'name', 'slug', 'logo', 'website', 'country',)
+        
+        
+class ImageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Image
+        fields = ('id', 'img',)
+        
 
-class ProductSerializer(BaseSerializer):
+
+class ProductListSerializer(BaseSerializer):
+    category_slug = serializers.SlugField(source='category.slug', read_only=True)
+    subcategory_slug = serializers.SlugField(source='subcategory.slug', read_only=True)
+    supersubcategory_slug = serializers.SlugField(source='supersubcategory.slug', read_only=True)
+    brand = BrandSerializer()
+    thumbnail = serializers.SerializerMethodField()
+    
+    
     class Meta:
         model = Product 
-        fields = '__all__'
+        fields = (
+            'id', 'name_tm', 'name_ru', 'sku', 'upc', 'slug', 'stock_quantity', 'description_tm', 
+            'description_ru', 'brand', 'thumbnail', 'price', 'discount_percent', 'is_public', 'is_featured', 
+            'is_original', 'is_new', 'rating', 'category_slug', 'subcategory_slug', 'supersubcategory_slug'
+        )
+        
+    def get_thumbnail(self, obj):
+        request = self.context.get('request')
+        if obj.images.exists():
+            first_image = obj.images.first()
+            if first_image:
+                return request.build_absolute_uri(first_image.img.url)
+        return None
+        
+        
+class ProductDetailSerializer(BaseSerializer):
+    category_slug = serializers.SlugField(source='category.slug', read_only=True)
+    subcategory_slug = serializers.SlugField(source='subcategory.slug', read_only=True)
+    supersubcategory_slug = serializers.SlugField(source='supersubcategory.slug', read_only=True)
+    brand = BrandSerializer()
+    images = ImageSerializer(many=True, read_only=True)
+    
+    
+    class Meta:
+        model = Product 
+        fields = (
+            'id', 'name_tm', 'name_ru', 'sku', 'upc', 'slug', 'stock_quantity', 'description_tm', 
+            'description_ru', 'brand', 'images', 'price', 'discount_percent', 'is_public', 'is_featured', 
+            'is_original', 'is_new', 'rating', 'category_slug', 'subcategory_slug', 'supersubcategory_slug'
+        )

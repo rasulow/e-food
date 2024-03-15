@@ -54,15 +54,22 @@ class SuperSubCategory(BaseCategory):
         
 
 
-class Brand(BaseModel):
+class Brand(models.Model):
+    name = models.CharField('Name', max_length=100)
+    slug = models.SlugField(max_length=50, unique=True, default='brand-slug')
     logo = models.ImageField('LOGO', upload_to='brand-logo/', blank=True, null=True)
     website = models.CharField('Web Site', max_length=50, blank=True, null=True)
     country = models.CharField('Country', max_length=50, blank=True, null=True)
+    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
     
     class Meta:
         db_table = 'brand'
         verbose_name = 'Brand'
         verbose_name_plural='Brands'
+        
+    def __str__(self) -> str:
+        return self.name
         
         
 class Product(BaseModel):
@@ -102,4 +109,18 @@ class Product(BaseModel):
         verbose_name = 'Product'    
         verbose_name_plural = 'Products'    
 
+
+
+class Image(models.Model):
+    img = models.ImageField(upload_to='product-images/')
+    product = models.ForeignKey(Product, related_name='images', on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
+    
+    class Meta:
+        db_table = 'image'
+        verbose_name = 'Image'
+        verbose_name_plural = 'Images'
+        ordering = ['-created_at']
+        
         

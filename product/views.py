@@ -1,4 +1,5 @@
 from rest_framework import generics
+from rest_framework.response import Response
 from .models import *
 from .serializers import *
 from .filters import CategorySlugFilterBackend
@@ -9,6 +10,32 @@ from django_filters.rest_framework import DjangoFilterBackend
 class CategoryListApiView(generics.ListAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    
+    
+class CategoryDetailApiView(generics.RetrieveAPIView):
+    def get(self, request, slug):
+        try:
+            category = Category.objects.get(slug=slug)
+            serializer = CategorySerializer(category)
+            return Response(serializer.data)
+        except Category.DoesNotExist:
+            pass
+        
+        try:
+            subcategory = SubCategory.objects.get(slug=slug)
+            serializer = SubCategorySerializer(subcategory)
+            return Response(serializer.data)
+        except SubCategory.DoesNotExist:
+            pass
+        
+        try:
+            supersubcategory = SuperSubCategory.objects.get(slug=slug)
+            serializer = SuperSubCategorySerializer(supersubcategory)
+            return Response(serializer.data)
+        except SuperSubCategory.DoesNotExist:
+            return Response({'message': 'Not found'}, status=404)
+    
+    
     
     
 class ProductListApiView(generics.ListAPIView):

@@ -6,24 +6,24 @@ def localize_data(data, request):
     if request and 'Accept-Language' in request.headers:
         lang = request.headers['Accept-Language']
         if lang.startswith('ru'):
-            data['name'] = data.get('name_ru', data.get('name'))
-            data['description'] = data.get('description_ru', data.get('description'))
+            data['name'] = data.pop('name_ru', None)
+            data['description'] = data.pop('description_ru', None)
             data.pop('name_tm', None)
             data.pop('description_tm', None)
         elif lang.startswith('tk'):
-            data['name'] = data.get('name_tm', data.get('name'))
-            data['description'] = data.get('description_tm', data.get('description'))
+            data['name'] = data.pop('name_tm', None)
+            data['description'] = data.pop('description_tm', None)
             data.pop('name_ru', None)
             data.pop('description_ru', None)
     return data
-
 
 
 class BaseSerializer(serializers.ModelSerializer):
     def to_representation(self, instance):
         request = self.context.get('request')
         data = super().to_representation(instance)
-        return localize_data(data, request)
+        localized_data = localize_data(data, request)
+        return localized_data
 
 
 class SuperSubCategorySerializer(BaseSerializer):

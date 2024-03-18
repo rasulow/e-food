@@ -16,21 +16,21 @@ class CategoryDetailApiView(generics.RetrieveAPIView):
     def get(self, request, slug):
         try:
             category = Category.objects.get(slug=slug)
-            serializer = CategorySerializer(category)
+            serializer = CategorySerializer(category, context={'request': request})
             return Response(serializer.data)
         except Category.DoesNotExist:
             pass
         
         try:
             subcategory = SubCategory.objects.get(slug=slug)
-            serializer = SubCategorySerializer(subcategory)
+            serializer = SubCategorySerializer(subcategory, context={'request': request})
             return Response(serializer.data)
         except SubCategory.DoesNotExist:
             pass
         
         try:
             supersubcategory = SuperSubCategory.objects.get(slug=slug)
-            serializer = SuperSubCategorySerializer(supersubcategory)
+            serializer = SuperSubCategorySerializer(supersubcategory, context={'request': request})
             return Response(serializer.data)
         except SuperSubCategory.DoesNotExist:
             return Response({'message': 'Not found'}, status=404)

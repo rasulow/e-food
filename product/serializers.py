@@ -19,10 +19,15 @@ def localize_data(data, request):
 
 
 class BaseSerializer(serializers.ModelSerializer):
+    excluded_fields = ['created_at', 'updated_at']
+
     def to_representation(self, instance):
         request = self.context.get('request')
         data = super().to_representation(instance)
         localized_data = localize_data(data, request)
+        
+        for field in self.excluded_fields:
+            localized_data.pop(field, None)
         return localized_data
 
 

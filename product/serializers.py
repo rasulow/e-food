@@ -19,15 +19,12 @@ def localize_data(data, request):
 
 
 class BaseSerializer(serializers.ModelSerializer):
-    excluded_fields = ['created_at', 'updated_at']
 
     def to_representation(self, instance):
         request = self.context.get('request')
         data = super().to_representation(instance)
         localized_data = localize_data(data, request)
-        
-        for field in self.excluded_fields:
-            localized_data.pop(field, None)
+
         return localized_data
 
 
@@ -43,8 +40,6 @@ class SuperSubCategorySerializer(BaseSerializer):
             'name': data.get('name'),
             'icon': data.get('icon'),
             'slug': data.get('slug'),
-            'created_at': data.get('created_at'),
-            'updated_at': data.get('updated_at'),
         }
         return ordered_data
 
@@ -64,8 +59,6 @@ class SubCategorySerializer(BaseSerializer):
             'icon': data.get('icon'),
             'slug': data.get('slug'),
             'children': data.get('supersubcategories'),
-            'created_at': data.get('created_at'),
-            'updated_at': data.get('updated_at'),
         }
         return ordered_data
 
@@ -85,8 +78,6 @@ class CategorySerializer(BaseSerializer):
             'icon': data.get('icon'),
             'slug': data.get('slug'),
             'children': data.get('subcategories'),
-            'created_at': data.get('created_at'),
-            'updated_at': data.get('updated_at'),
         }
         return ordered_data
 

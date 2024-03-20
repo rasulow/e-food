@@ -53,3 +53,8 @@ class ProductAdmin(admin.ModelAdmin):
     exclude = ('rating',)
     list_display = ('name_tm', 'name_ru', 'sku', 'stock_quantity', 'price', 'brand', 'is_original', 'is_new', 'rating',)
     list_filter = ('brand', 'is_original', 'is_new',)
+    
+    
+@admin.register(models.Favourite)
+class FavouriteAdmin(admin.ModelAdmin):
+    list_display = ('product', 'user',)

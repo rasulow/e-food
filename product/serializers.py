@@ -135,3 +135,9 @@ class ProductDetailSerializer(BaseSerializer):
             'description_ru', 'brand', 'images', 'price', 'discount_percent', 'is_public', 'is_featured', 
             'is_original', 'is_new', 'rating', 'category_slug', 'subcategory_slug', 'supersubcategory_slug'
         )
+
+
+class FavouriteCreateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Favourite
+        fields = ('product',)

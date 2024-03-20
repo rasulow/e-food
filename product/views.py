@@ -2,9 +2,9 @@ from rest_framework import generics
 from rest_framework.response import Response
 from .models import *
 from .serializers import *
-from .filters import CategorySlugFilterBackend
 from django_filters.rest_framework import DjangoFilterBackend
-
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 class CategoryListApiView(generics.ListAPIView):
@@ -13,26 +13,56 @@ class CategoryListApiView(generics.ListAPIView):
     
     
 class CategoryDetailApiView(generics.RetrieveAPIView):
-    def get(self, request, slug):
+    queryset = Category.objects.none()  # Define an empty queryset, as we'll override get_queryset()
+
+    def get_queryset(self):
+        slug = self.kwargs['slug']
         try:
-            category = Category.objects.get(slug=slug)
-            serializer = CategorySerializer(category, context={'request': request})
-            return Response(serializer.data)
+            category = Category.objects.filter(slug=slug)
+            if category.exists():
+                return category
         except Category.DoesNotExist:
             pass
         
         try:
-            subcategory = SubCategory.objects.get(slug=slug)
-            serializer = SubCategorySerializer(subcategory, context={'request': request})
-            return Response(serializer.data)
+            subcategory = SubCategory.objects.filter(slug=slug)
+            if subcategory.exists():
+                return subcategory
         except SubCategory.DoesNotExist:
             pass
         
         try:
-            supersubcategory = SuperSubCategory.objects.get(slug=slug)
-            serializer = SuperSubCategorySerializer(supersubcategory, context={'request': request})
-            return Response(serializer.data)
+            supersubcategory = SuperSubCategory.objects.filter(slug=slug)
+            if supersubcategory.exists():
+                return supersubcategory
         except SuperSubCategory.DoesNotExist:
+            pass
+        
+        # If no matching object found, return an empty queryset
+        return Category.objects.none()
+
+    def get_serializer_class(self):
+        # Define serializer class based on the queryset
+        queryset = self.get_queryset()
+        if queryset.exists():
+            instance = queryset.first()
+            if isinstance(instance, Category):
+                return CategorySerializer
+            elif isinstance(instance, SubCategory):
+                return SubCategorySerializer
+            elif isinstance(instance, SuperSubCategory):
+                return SuperSubCategorySerializer
+        return None
+
+    def get(self, request, slug):
+        queryset = self.get_queryset()
+        serializer_class = self.get_serializer_class()
+
+        if queryset.exists() and serializer_class:
+            instance = queryset.first()
+            serializer = serializer_class(instance, context={'request': request})
+            return Response(serializer.data)
+        else:
             return Response({'message': 'Not found'}, status=404)
     
     
@@ -68,4 +98,30 @@ class ProductDetailApiView(generics.RetrieveAPIView):
 class BrandListApiView(generics.ListAPIView):
     queryset = Brand.objects.all()
     serializer_class = BrandSerializer
+    
+    
+class FavouriteView(generics.ListCreateAPIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+
+    def get_queryset(self):
+        return Product.objects.filter(favourite__user=self.request.user)
+
+    def get_serializer_class(self):
+        if self.request.method == 'GET':
+            return ProductListSerializer
+        elif self.request.method == 'POST':
+            return FavouriteCreateSerializer
+
+    def post(self, request, *args, **kwargs):
+        token = request.headers.get('Authorization').split(' ')[1]
+
+        product_id = request.data.get('product')
+        if Favourite.objects.filter(product_id=product_id, user=request.user).exists():
+            return Response({'message': 'Product already in favorites'}, status=400)
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(user=request.user)
+        return Response(serializer.data, status=201)
+
     

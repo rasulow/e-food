@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 class BaseModel(models.Model):
@@ -108,6 +109,7 @@ class Product(BaseModel):
         db_table = 'product'
         verbose_name = 'Product'    
         verbose_name_plural = 'Products'    
+        ordering = ('-created_at',)
 
 
 
@@ -124,3 +126,15 @@ class Image(models.Model):
         ordering = ['-created_at']
         
         
+        
+class Favourite(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True, blank=True, null=True)
+    updated_at = models.DateTimeField(auto_now=True, blank=True, null=True)
+    
+    class Meta:
+        db_table = 'favourite'
+        verbose_name = 'Favourite'
+        verbose_name_plural = 'Favourites'
+        ordering = ['-created_at']

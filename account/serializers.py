@@ -1,5 +1,6 @@
 from rest_framework import serializers, status
 from django.contrib.auth.models import User
+from .models import Address
 
 
 class TokenObtainPairResponseSerializer(serializers.Serializer):
@@ -47,3 +48,10 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data.pop('password_confirmation')
         return User.objects.create_user(**validated_data)
+    
+    
+    
+class AddressSerializer(serializers.ModelSerializer):
+    class Meta:
+        model=Address
+        fields = ('address', )

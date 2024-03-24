@@ -13,39 +13,27 @@ class CategoryListApiView(generics.ListAPIView):
     
     
 class CategoryDetailApiView(generics.RetrieveAPIView):
-    queryset = Category.objects.none()  # Define an empty queryset, as we'll override get_queryset()
+    queryset = Category.objects.none()
 
-    def get_queryset(self):
-        slug = self.kwargs['slug']
-        try:
-            category = Category.objects.filter(slug=slug)
-            if category.exists():
-                return category
-        except Category.DoesNotExist:
-            pass
-        
-        try:
-            subcategory = SubCategory.objects.filter(slug=slug)
-            if subcategory.exists():
-                return subcategory
-        except SubCategory.DoesNotExist:
-            pass
-        
-        try:
-            supersubcategory = SuperSubCategory.objects.filter(slug=slug)
-            if supersubcategory.exists():
-                return supersubcategory
-        except SuperSubCategory.DoesNotExist:
-            pass
-        
-        # If no matching object found, return an empty queryset
-        return Category.objects.none()
+    def get_object(self):
+        slug = self.kwargs.get('slug')
+        queryset = Category.objects.filter(slug=slug)
+        if queryset.exists():
+            return queryset.first()
+
+        queryset = SubCategory.objects.filter(slug=slug)
+        if queryset.exists():
+            return queryset.first()
+
+        queryset = SuperSubCategory.objects.filter(slug=slug)
+        if queryset.exists():
+            return queryset.first()
+
+        return None
 
     def get_serializer_class(self):
-        # Define serializer class based on the queryset
-        queryset = self.get_queryset()
-        if queryset.exists():
-            instance = queryset.first()
+        instance = self.get_object()
+        if instance:
             if isinstance(instance, Category):
                 return CategorySerializer
             elif isinstance(instance, SubCategory):
@@ -55,15 +43,14 @@ class CategoryDetailApiView(generics.RetrieveAPIView):
         return None
 
     def get(self, request, slug):
-        queryset = self.get_queryset()
+        instance = self.get_object()
         serializer_class = self.get_serializer_class()
 
-        if queryset.exists() and serializer_class:
-            instance = queryset.first()
+        if instance and serializer_class:
             serializer = serializer_class(instance, context={'request': request})
             return Response(serializer.data)
         else:
-            return Response({'message': 'Not found'}, status=404)
+            return Response({'message': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
     
     
     
@@ -123,5 +110,3 @@ class FavouriteView(generics.ListCreateAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save(user=request.user)
         return Response(serializer.data, status=201)
-
-    

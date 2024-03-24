@@ -8,6 +8,8 @@ from rest_framework_simplejwt.views import (
     TokenVerifyView,
 )
 from .serializers import *
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 
 
@@ -72,3 +74,22 @@ class UserRegistrationsView(generics.CreateAPIView):
             if user:
                 return response.Response(serializer.data, status=status.HTTP_201_CREATED)
         return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    
+class AddressListCreateAPIView(generics.ListCreateAPIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+    serializer_class = AddressSerializer    
+    
+    def get_queryset(self):
+        return Address.objects.filter(user=self.request.user)
+    
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            address = serializer.save(user=request.user)
+            if address:
+                return response.Response(serializer.data, status=status.HTTP_201_CREATED)
+        return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    

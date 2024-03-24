@@ -6,7 +6,7 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
-SECRET_KEY = 'django-insecure-71)-n-0k=8w!ojl=ftv(c)oe2*_%ce^v$#e(==a6p(_$tuhg5&'
+SECRET_KEY = '5&django-insecure-71)-n-0k=8w!ojl=ftv(c)oe2*_%ce^v$#e(==a6p(_$tuhg'
 
 DEBUG = True
 
@@ -30,8 +30,8 @@ INSTALLED_APPS = [
     
     # custom app's
     'product.apps.ProductConfig',
-    'cart.apps.CartConfig',
     'account.apps.AccountConfig',
+    'basket.apps.BasketConfig',
 ]
 
 

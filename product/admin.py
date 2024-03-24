@@ -51,7 +51,7 @@ class ImageAdmin(admin.ModelAdmin):
 @admin.register(models.Product)
 class ProductAdmin(admin.ModelAdmin):
     exclude = ('rating',)
-    list_display = ('name_tm', 'name_ru', 'sku', 'stock_quantity', 'price', 'brand', 'is_original', 'is_new', 'rating',)
+    list_display = ('id', 'name_tm', 'name_ru', 'sku', 'stock_quantity', 'price', 'brand', 'is_original', 'is_new', 'rating',)
     list_filter = ('brand', 'is_original', 'is_new',)
     
     

@@ -22,7 +22,7 @@ class Basket(models.Model):
 
 
 class BasketItem(models.Model):
-    basket = models.ForeignKey(Basket, on_delete=models.CASCADE)
+    basket = models.ForeignKey(Basket, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
     total_price = models.DecimalField(max_digits=20, decimal_places=2, default=0.00)
@@ -41,7 +41,7 @@ class BasketItem(models.Model):
     def save(self, *args, **kwargs):
         self.total_price = self.product.price * self.quantity
         basket_price = 0
-        basketItems = BasketItem.objects.filter(uuid=self.basket.uuid)
+        basketItems = BasketItem.objects.filter(basket=self.basket)  # Filter by basket object instead of uuid
         for item in basketItems:
             basket_price += item.total_price
         self.basket.total_price = basket_price

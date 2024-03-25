@@ -62,4 +62,7 @@ class BasketItemUpdateQuantityAPIView(generics.UpdateAPIView):
         return Response(serializer.data, status=status.HTTP_200_OK)
     
     
+class BasketItemDeleteApiView(generics.DestroyAPIView):
+    queryset = BasketItem.objects.all()
+    lookup_field = 'id'    
     

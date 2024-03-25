@@ -6,4 +6,5 @@ urlpatterns = [
     path('<str:uuid>/', BasketRetrieveApiView.as_view(), name='basket-detail'),
     path('item/<str:uuid>/', BasketItemCreateApiView.as_view(), name='basket-item-create'),
     path('update-item/<int:id>/', BasketItemUpdateQuantityAPIView.as_view(), name='basket-item-update'),
+    path('delete-item/<int:id>/', BasketItemDeleteApiView.as_view(), name='basket-item-delete'),
 ]

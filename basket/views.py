@@ -47,17 +47,19 @@ class BasketItemCreateApiView(generics.CreateAPIView):
             return Response({"message": "Basket not found"}, status=404)  
         
         
-# class BasketItemUpdateQuantityAPIView(generics.UpdateAPIView):
-#     queryset = BasketItem.objects.all()
-#     serializer_class = BasketItemUpdateSerializer
-#     lookup_field = 'id'  # Use 'id' or any other field you prefer for lookup
+class BasketItemUpdateQuantityAPIView(generics.UpdateAPIView):
+    queryset = BasketItem.objects.all()
+    serializer_class = BasketItemUpdateSerializer
+    lookup_field = 'id'  # Use 'id' or any other field you prefer for lookup
 
-#     def update(self, request, *args, **kwargs):
-#         instance = self.get_object()
-#         data = {'quantity': request.data.get('quantity')}  # Assuming the request data contains only the new quantity
+    def update(self, request, *args, **kwargs):
+        instance = self.get_object()
+        data = {'quantity': request.data.get('quantity')}  # Assuming the request data contains only the new quantity
 
-#         serializer = self.get_serializer(instance, data=data, partial=True)
-#         serializer.is_valid(raise_exception=True)
-#         self.perform_update(serializer)
-#         return Response(serializer.data, status=status.HTTP_200_OK)
+        serializer = self.get_serializer(instance, data=data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        self.perform_update(serializer)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    
     

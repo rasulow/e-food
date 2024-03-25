@@ -12,7 +12,8 @@ class BasketCreateApiView(APIView):
     queryset = Basket.objects.all()  # Define the queryset here
 
     def post(self, request, *args, **kwargs):
-        user = get_user(request)
+        # user = get_user(request)
+        user = None
         basket = Basket.objects.create(user=user)
         return Response(
             {

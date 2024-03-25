@@ -9,7 +9,6 @@ from rest_framework.permissions import DjangoModelPermissionsOrAnonReadOnly
 
 
 class BasketCreateApiView(APIView):
-    permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         user = get_user(request)

@@ -42,7 +42,12 @@ class BasketItemCreateApiView(generics.CreateAPIView):
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             serializer.save(basket=basket)
-            return Response(serializer.data, status=201)
+            return Response(
+                {
+                    'item_id': serializer.data.get('id')
+                }, 
+                status=201
+            )
         except Basket.DoesNotExist:
             return Response({"message": "Basket not found"}, status=404)  
         

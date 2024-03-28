@@ -16,7 +16,7 @@ class BasketItemProductSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = BasketItem
-        fields = ('product', 'quantity',)
+        fields = ('id', 'product', 'quantity',)
         
         
 class BasketItemUpdateSerializer(serializers.ModelSerializer):

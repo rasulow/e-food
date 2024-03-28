@@ -41,10 +41,10 @@ class BasketItemCreateApiView(generics.CreateAPIView):
             basket = Basket.objects.get(uuid=basket_uuid)
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
-            serializer.save(basket=basket)
+            instance = serializer.save(basket=basket)
             return Response(
                 {
-                    'item_id': serializer.data.get('id')
+                    'item_id': instance.id
                 }, 
                 status=201
             )

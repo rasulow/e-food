@@ -65,6 +65,7 @@ class ProductListApiView(generics.ListAPIView):
 
     def filter_queryset(self, queryset):
         category_slug = self.request.query_params.get('category__slug', None)
+        brand_slug = self.request.query_params.get('brand__slug', None)
         if category_slug:
             queryset = queryset.filter(
                 category__slug=category_slug
@@ -73,6 +74,11 @@ class ProductListApiView(generics.ListAPIView):
             ) | queryset.filter(
                 supersubcategory__slug=category_slug
             )
+        if brand_slug:
+            queryset = queryset.filter(
+                brand__slug=brand_slug
+            )
+        
         return queryset
 
 

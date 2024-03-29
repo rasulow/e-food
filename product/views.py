@@ -5,6 +5,8 @@ from .serializers import *
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
+from utils.token_handle import get_user
+
 
 
 class CategoryListApiView(generics.ListAPIView):
@@ -101,8 +103,6 @@ class FavouriteView(generics.ListCreateAPIView):
             return FavouriteCreateSerializer
 
     def post(self, request, *args, **kwargs):
-        token = request.headers.get('Authorization').split(' ')[1]
-
         product_id = request.data.get('product')
         if Favourite.objects.filter(product_id=product_id, user=request.user).exists():
             return Response({'message': 'Product already in favorites'}, status=400)
@@ -110,3 +110,19 @@ class FavouriteView(generics.ListCreateAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save(user=request.user)
         return Response(serializer.data, status=201)
+    
+    
+class FavouriteDestroyApiView(generics.DestroyAPIView):
+    queryset = Favourite.objects.all()
+    lookup_field = 'id'
+    
+    def destroy(self, request, *args, **kwargs):
+        user = get_user(request)
+        product_id = kwargs[self.lookup_field]
+        try:
+            favourite = Favourite.objects.get(user_id=user.id, product_id=product_id)
+        except Favourite.DoesNotExist:
+            return Response(status=404)
+        
+        favourite.delete()
+        return Response(status=204)

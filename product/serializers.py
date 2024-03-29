@@ -141,3 +141,11 @@ class FavouriteCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Favourite
         fields = ('product',)
+        
+        
+class FavouriteListSerializer(serializers.ModelSerializer):
+    product = ProductDetailSerializer(read_only=True)
+    
+    class Meta:
+        model = Favourite
+        fields = ('id', 'product',)

@@ -52,7 +52,7 @@ class CategoryDetailApiView(generics.RetrieveAPIView):
             serializer = serializer_class(instance, context={'request': request})
             return Response(serializer.data)
         else:
-            return Response({'message': 'Not found'}, status=status.HTTP_404_NOT_FOUND)
+            return Response({'message': 'Not found'}, status=404)
     
     
     

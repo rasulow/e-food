@@ -32,6 +32,7 @@ INSTALLED_APPS = [
     'product.apps.ProductConfig',
     'account.apps.AccountConfig',
     'basket.apps.BasketConfig',
+    'checkout.apps.CheckoutConfig',
 ]
 
 

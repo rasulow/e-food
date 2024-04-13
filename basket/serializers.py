@@ -3,9 +3,6 @@ from .models import *
 from product.serializers import ProductDetailSerializer
 
 
-
-        
-        
 class BasketItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = BasketItem

@@ -1,5 +1,5 @@
 from django.db import models
-
+from basket.models import Basket
 
 class PaymentType(models.Model):
     type = models.CharField(max_length=100)
@@ -28,6 +28,7 @@ class DeliveryType(models.Model):
     
 
 class Checkout(models.Model):
+    basket = models.ForeignKey(Basket, on_delete=models.CASCADE)
     payment = models.ForeignKey(PaymentType, on_delete=models.SET_NULL, null=True, blank=True)
     full_name = models.CharField(max_length=100)
     phone_number = models.CharField(max_length=12)

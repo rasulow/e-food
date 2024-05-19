@@ -7,7 +7,7 @@ from . import models
     
 @admin.register(models.Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('name_tm', 'name_ru',)
+    list_display = ('name_tm', 'name_ru', 'is_featured')
     
     
 @admin.register(models.SubCategory)

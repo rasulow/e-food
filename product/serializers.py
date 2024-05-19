@@ -77,6 +77,7 @@ class CategorySerializer(BaseSerializer):
             'name': data.get('name'),
             'icon': data.get('icon'),
             'slug': data.get('slug'),
+            'is_featured': data.get('is_featured'),
             'children': data.get('subcategories'),
         }
         return ordered_data

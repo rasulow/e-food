@@ -1,20 +1,33 @@
 from rest_framework import serializers
 from .models import *
+from basket import serializers as basket_serializers
 
 
 class PaymentTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = PaymentType
-        fields = ('id', 'type',)
+        fields = "__all__"
         
         
 class DeliveryTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = DeliveryType
-        fields = ('id', 'type', 'price')
+        fields = "__all__"
         
 
-class CheckoutSerializer(serializers.ModelSerializer):
+class CheckoutCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Checkout
-        fields = ('id', 'basket', 'payment', 'full_name', 'phone_number', 'address', 'address_detail', 'note', 'delivery') 
+        fields = "__all__"
+        
+        
+class CheckoutListSerializer(serializers.ModelSerializer):
+    basket = basket_serializers.BasketDetailSerializer()
+    payment = PaymentTypeSerializer()
+    delivery = DeliveryTypeSerializer()
+    
+    class Meta:
+        model = Checkout
+        fields = ('id', 'basket', 'payment', 'delivery', 'status')
+        
+    

@@ -22,6 +22,17 @@ class CheckoutTypesAPIView(APIView):
     
     
     
-class CheckoutCreateAPIView(generics.CreateAPIView):
+class CheckoutListCreateAPIView(generics.ListCreateAPIView):
     queryset = Checkout.objects.all()
-    serializer_class = CheckoutSerializer
+    
+    def get_serializer_class(self):
+        if self.request.method == 'POST':
+            return CheckoutCreateSerializer
+        elif self.request.method == 'GET':
+            return CheckoutListSerializer
+        
+        
+class CheckoutDetailAPIView(generics.RetrieveAPIView):
+    queryset = Checkout.objects.all()
+    serializer_class = CheckoutListSerializer
+    lookup_field = 'id'

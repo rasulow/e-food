@@ -27,6 +27,8 @@ class BaseCategory(BaseModel):
     
     
 class Category(BaseCategory):
+    is_featured = models.BooleanField(default=False)
+    
     class Meta:
         db_table = 'category'
         verbose_name = 'Category'

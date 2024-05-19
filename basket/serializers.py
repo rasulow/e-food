@@ -6,20 +6,19 @@ from product.serializers import ProductDetailSerializer
 class BasketItemSerializer(serializers.ModelSerializer):
     class Meta:
         model = BasketItem
-        fields = ('product', 'quantity',)
+        fields = "__all__"
 
 class BasketItemProductSerializer(serializers.ModelSerializer):
     product = ProductDetailSerializer()
     
     class Meta:
         model = BasketItem
-        fields = ('id', 'product', 'quantity',)
-        
+        fields = "__all__"        
         
 class BasketItemUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = BasketItem
-        fields = ('quantity',)
+        fields = "__all__"
         
 
 class BasketDetailSerializer(serializers.ModelSerializer):
@@ -27,4 +26,4 @@ class BasketDetailSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Basket
-        fields = ('id', 'user', 'uuid', 'total_price', 'items',)
+        fields = "__all__"

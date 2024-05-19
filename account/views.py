@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import serializers, status, generics, response
+from rest_framework.views import APIView
 from rest_framework_simplejwt.views import (
     TokenBlacklistView,
     TokenObtainPairView,
@@ -93,3 +94,31 @@ class AddressListCreateAPIView(generics.ListCreateAPIView):
         return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
     
+class AddressDestroyAPIView(generics.DestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+    lookup_field = 'id'
+    
+    def get_queryset(self):
+        return Address.objects.filter(user=self.request.user)
+    
+    
+    
+class UserInfoAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [JWTAuthentication]
+    serializer_class = UserInfoSerializer
+
+    
+    def get(self, request):
+        user = request.user
+        serializer = UserInfoSerializer(user)
+        return response.Response(serializer.data)
+
+    def put(self, request):
+        user = request.user
+        serializer = UserInfoSerializer(user, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return response.Response(serializer.data)
+        return response.Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

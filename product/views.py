@@ -1,8 +1,9 @@
-from rest_framework import generics
+from rest_framework import generics, filters
 from rest_framework.response import Response
 from .models import *
 from .serializers import *
 from django_filters.rest_framework import DjangoFilterBackend
+from django.db.models import Q
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from utils.token_handle import get_user
@@ -12,6 +13,8 @@ from utils.token_handle import get_user
 class CategoryListApiView(generics.ListAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    filter_backends = [DjangoFilterBackend]
+    filterset_fields = ['is_featured']
     
     
 class CategoryDetailApiView(generics.RetrieveAPIView):
@@ -60,12 +63,14 @@ class CategoryDetailApiView(generics.RetrieveAPIView):
 class ProductListApiView(generics.ListAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductListSerializer
-    filter_backends = [DjangoFilterBackend]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
     filterset_fields = ['category__slug', 'brand__slug']
+    search_fields = ['search']
 
     def filter_queryset(self, queryset):
         category_slug = self.request.query_params.get('category__slug', None)
         brand_slug = self.request.query_params.get('brand__slug', None)
+        search = self.request.query_params.get('search', None)
         if category_slug:
             queryset = queryset.filter(
                 category__slug=category_slug
@@ -77,6 +82,13 @@ class ProductListApiView(generics.ListAPIView):
         if brand_slug:
             queryset = queryset.filter(
                 brand__slug=brand_slug
+            )
+        if search:
+            queryset = queryset.filter(
+                Q(name_ru__icontains=search) | 
+                Q(name_tm__icontains=search) | 
+                Q(description_ru__icontains=search) | 
+                Q(description_tm__icontains=search)
             )
         
         return queryset
